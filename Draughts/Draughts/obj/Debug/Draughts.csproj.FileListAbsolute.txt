@@ -1,0 +1,7 @@
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\bin\Debug\Draughts.exe.config
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\bin\Debug\Draughts.exe
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\bin\Debug\Draughts.pdb
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\obj\Debug\Draughts.csproj.AssemblyReference.cache
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\obj\Debug\Draughts.csproj.CoreCompileInputs.cache
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\obj\Debug\Draughts.exe
+C:\Users\MiniMonster\Documents\repos\polish-draughts-csharp-mlocekjakub\Draughts\Draughts\obj\Debug\Draughts.pdb
