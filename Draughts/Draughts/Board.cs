@@ -8,6 +8,11 @@ namespace Draughts
 {
     class Board
     {
+        public string ToString()
+        {
+            
+        }
+
         public Pawn[,] Fields { get; set; }
 
         public Board(int n)
