@@ -27,6 +27,9 @@ namespace Draughts
                 while (!success)
                 {
                     output = Console.ReadLine();
+                    
+                    // TODO: zabezpiecz output przed nienumerycznymi znakami (dupom)
+                    
                     if (int.Parse(output) > 9 && int.Parse(output) < 21)
                     {
                         board = new Board(int.Parse(output));

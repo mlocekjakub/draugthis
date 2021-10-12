@@ -9,7 +9,6 @@ namespace Draughts
 {
     public class Game
     {
-
         public void Start(Board board)
         {
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Turn
+    public class Turn
     {
         public Coords StartingPos { get; set; }
         public Coords EndingPos { get; set; }
