@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Board
+    public class Board
     {
         Rewind _rewind;
 
@@ -63,7 +63,7 @@ namespace Draughts
             }
         }
 
-        public void PrintBoard()
+        public void PrintBoarddupa()
         {
             for (int i = 0; i < Fields.GetLength(0); i++)
             {
@@ -109,27 +109,43 @@ namespace Draughts
                 switch (_Key.Key)
                 {
                     case ConsoleKey.RightArrow:
-                        if (Cursor.XPos + 1 < Fields.GetLength(0))
+                        if (Cursor.XPos + 2 < Fields.GetLength(0))
                         {
-                            Cursor.XPos++;
+                            Cursor.XPos += 2;
                         }
                         break;
                     case ConsoleKey.LeftArrow:
-                        if (Cursor.XPos - 1 >= 0)
+                        if (Cursor.XPos - 2 >= 0)
                         {
-                            Cursor.XPos--;
+                            Cursor.XPos -= 2;
                         }
                         break;
                     case ConsoleKey.UpArrow:
                         if (Cursor.YPos - 1 >= 0)
                         {
                             Cursor.YPos--;
+                            if (Cursor.XPos - 1 >= 0)
+                            {
+                                Cursor.XPos--;
+                            }
+                            else
+                            {
+                                Cursor.XPos++;
+                            }
                         }
                         break;
                     case ConsoleKey.DownArrow:
                         if (Cursor.YPos + 1 < Fields.GetLength(0))
                         {
                             Cursor.YPos++;
+                            if (Cursor.XPos + 1 < this.Fields.GetLength(0))
+                            {
+                                Cursor.XPos++;
+                            }
+                            else
+                            {
+                                Cursor.XPos--;
+                            }
                         }
                         break;
                     case ConsoleKey.Enter:
@@ -195,14 +211,52 @@ namespace Draughts
             {
                 var turn = _rewind.GetLastMove();
                 MoveBack(turn.EndingPos, turn.StartingPos);
-                if (turn.KilledColour != "none") 
+                if (turn.KilledColour != "none")
                 {
                     var pos = turn.GetKilledPawnCoords();
                     Fields[pos.YPos, pos.XPos] = new Pawn(turn.KilledColour);
                 }
             }
         }
+        public void PrintBoard()
+        {
+            for (int i = 0; i < this.Fields.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.Fields.GetLength(0); j++)
+                {
 
+                    if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.White;
 
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+
+                    if (i == this.Cursor.YPos & j == this.Cursor.XPos)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Yellow;
+                    }
+                    if (this.Fields[i, j] != null)
+                    {
+                        if (this.Fields[i, j].Highlight)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Cyan;
+                        }
+                        Console.Write($" O ");
+                    }
+                    else
+                    {
+                        Console.Write("   ");
+                    }
+                }
+
+                Console.WriteLine();
+            }
+        }
     }
 }
