@@ -11,6 +11,9 @@ namespace Draughts
     {
         Rewind _rewind;
 
+        public bool IsAIWhite { get; set; }
+        
+        public bool IsAIBlack { get; set; }
         public Pawn[,] Fields { get; set; }
 
         private Coords Cursor { get; set; }

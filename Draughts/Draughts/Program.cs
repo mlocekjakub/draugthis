@@ -10,18 +10,12 @@ namespace Draughts
     {
         public static void Main(string[] args)
         {
-            var board = new Board(10);
+            //var board = new Board(10);
             var game = new Game();
-            board.Fields[5, 4] = new Pawn("black");
+            //board.Fields[5, 4] = new Pawn("black");
+            Menu menu = new Menu();
+            var board = menu.RunMenu();
             game.Start(board);
-            //ConsoleColor backgroundColor = Console.BackgroundColor;
-            //ConsoleColor foregroundColor = Console.ForegroundColor;
-            //Console.WriteLine("hello kurwa");
-            //Board board = new Board(20);
-            //board.InitBoard();
-            //board.choosingPawn();
-            //Console.BackgroundColor = backgroundColor;
-            //Console.ForegroundColor = foregroundColor;
         }
     }
 }
