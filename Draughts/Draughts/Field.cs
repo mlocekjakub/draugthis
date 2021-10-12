@@ -6,15 +6,8 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    public class Pawn
+    public class Field
     {
-        public string Color { get; set; }
-
         public bool Highlight { get; set; } = false;
-
-        public Pawn(string color)
-        {
-            Color = color;
-        }
     }
 }
