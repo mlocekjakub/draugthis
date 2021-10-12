@@ -10,7 +10,10 @@ namespace Draughts
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("hello kurwa");
+            var board = new Board(10);
+            var game = new Game();
+            board.Fields[5, 4] = new Pawn("black");
+            game.Start(board);
         }
     }
 }
