@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Rewind
+    public class Rewind
     {
         private Stack<Turn> _turns = new Stack<Turn>();
 

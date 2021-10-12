@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Game
+    public class Game
     {
 
         public void Start(Board board)

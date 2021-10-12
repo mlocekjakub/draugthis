@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Coords
+    public class Coords
     {
         public int YPos{ get; set; }
         public int XPos { get; set; }

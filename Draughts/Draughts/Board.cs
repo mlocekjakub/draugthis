@@ -220,6 +220,8 @@ namespace Draughts
         }
         public void PrintBoard()
         {
+            ConsoleColor backgroundColor = Console.BackgroundColor;
+            ConsoleColor foregroundColor = Console.ForegroundColor;
             for (int i = 0; i < this.Fields.GetLength(0); i++)
             {
                 for (int j = 0; j < this.Fields.GetLength(0); j++)
@@ -239,7 +241,7 @@ namespace Draughts
 
                     if (i == this.Cursor.YPos & j == this.Cursor.XPos)
                     {
-                        Console.BackgroundColor = ConsoleColor.Yellow;
+                        Console.BackgroundColor = ConsoleColor.DarkCyan;
                     }
                     if (this.Fields[i, j] != null)
                     {
@@ -247,6 +249,8 @@ namespace Draughts
                         {
                             Console.BackgroundColor = ConsoleColor.Cyan;
                         }
+
+                        Console.ForegroundColor = this.Fields[i, j].FontColor;
                         Console.Write($" O ");
                     }
                     else
@@ -257,6 +261,8 @@ namespace Draughts
 
                 Console.WriteLine();
             }
+            Console.BackgroundColor = backgroundColor;
+            Console.ForegroundColor = foregroundColor;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Draughts
 {
-    class Field
+    public class Field
     {
         public bool Highlight { get; set; } = false;
     }
