@@ -16,6 +16,9 @@ namespace Draughts
             Menu menu = new Menu();
             var board = menu.RunMenu();
             game.Start(board);
+           
         }
+        
     }
+    
 }

@@ -27,13 +27,16 @@ namespace Draughts
                 while (!success)
                 {
                     output = Console.ReadLine();
-                    
-                    // TODO: zabezpiecz output przed nienumerycznymi znakami (dupom)
-                    
-                    if (int.Parse(output) > 9 && int.Parse(output) < 21)
+                    int intOutput;
+                    if (int.TryParse(output, out intOutput) && intOutput > 9 && intOutput < 21)
                     {
                         board = new Board(int.Parse(output));
                         success = true;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Choose board size between 10 and 20");
                     }
                 }
                 bool successed = false;

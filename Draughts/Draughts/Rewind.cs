@@ -10,13 +10,18 @@ namespace Draughts
     {
         private Stack<Turn> _turns = new Stack<Turn>();
 
-        public void AddTurn(Coords startingPos, Coords endingPos, string killedColor)
+        public void AddTurn(Move move)
         {
-            _turns.Push(new Turn(startingPos, endingPos, killedColor));
+                _turns.Push(new Turn(move));
         }
-        public Turn GetLastMove()
+        public Turn GetLastTurn()
         {
             return _turns.Pop();
+        }
+
+        public void AddMove(Move move)
+        {
+            _turns.Peek().AddMove(move);
         }
 
         public bool IsEmpty()
