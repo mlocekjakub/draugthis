@@ -9,14 +9,15 @@ namespace Draughts
 {
     public class Game
     {
+        public string Winner { get; set; } = "tie";
         public void Start(Board board)
         {
-
-            while (true)
+            while (!CheckForWinnersOrTie(board))
             {
                 MakeAMove(board, "white");
                 MakeAMove(board, "black");
             }
+            Console.WriteLine(Winner != "tie" ? $"{Winner} wins!!!" : $"There's a {Winner}!!!");
         }
 
         private void MakeAMove(Board board, string color)
@@ -166,6 +167,30 @@ namespace Draughts
                 }
             }
             return endingPos;
+        }
+
+        public bool CheckForWinnersOrTie(Board board)
+        {
+            bool isThereWinOrTie = false;
+
+            if (board.amountOfWhitePawns == 0 || board.amountOfBlackPawns == 0)
+            {
+                isThereWinOrTie = true;
+                Winner = board.amountOfWhitePawns == 0 ? "black" : "white";
+            } else if (board.amountOfWhitePawns == 1 && board.amountOfBlackPawns == 1)
+            {
+                int counter = 0;
+                foreach (Pawn boardField in board.Fields)
+                {
+                    if (boardField is Pawn && boardField.isCrowned)
+                    {
+                        counter++;
+                    }
+                }
+                isThereWinOrTie = counter == 2 ? true : false;
+            }
+
+            return isThereWinOrTie;
         }
     }
 }

@@ -10,9 +10,11 @@ namespace Draughts
     public class Board
     {
         Rewind _rewind;
+        
+        public int amountOfWhitePawns { get; set; }
+        public int amountOfBlackPawns { get; set; }
 
         public bool IsAIWhite { get; set; }
-
         public bool IsAIBlack { get; set; }
         public Pawn[,] Fields { get; set; }
 
@@ -22,6 +24,8 @@ namespace Draughts
 
         public Board(int n)
         {
+            amountOfWhitePawns = n * 2;
+            amountOfBlackPawns = n * 2;
             _rewind = new Rewind();
             Fields = new Pawn[n, n];
             BoardInit();
