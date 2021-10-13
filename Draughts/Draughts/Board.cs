@@ -11,9 +11,9 @@ namespace Draughts
     {
         Rewind _rewind;
 
-        public bool IsAIWhite { get; set; }
+        public bool IsAiWhite { get; set; }
 
-        public bool IsAIBlack { get; set; }
+        public bool IsAiBlack { get; set; }
         public Pawn[,] Fields { get; set; }
 
         public Coords WhiteCursor { get; set; }
@@ -26,7 +26,7 @@ namespace Draughts
             Fields = new Pawn[n, n];
             BoardInit();
         }
-
+        
         public void BoardInit()
         {
             int boardSize = Fields.GetLength(1);
@@ -265,7 +265,7 @@ namespace Draughts
 
                         Console.ForegroundColor = this.Fields[i, j].FontColor;
                         
-                        Console.Write(this.Fields[i, j].isCrowned?" ♀ ":" ○ ");
+                        Console.Write(this.Fields[i, j].IsCrowned?" ♀ ":" ○ ");
                         
                     }
                     else

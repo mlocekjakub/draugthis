@@ -11,7 +11,7 @@ namespace Draughts
         {
             Pointer = 0;
         }
-
+        
         public Board RunMenu()
         {
             int option = SelectOption(0);
@@ -49,10 +49,10 @@ namespace Draughts
                             successed = true;
                             break;
                         case 1:
-                            board.IsAIWhite = !board.IsAIWhite;
+                            board.IsAiWhite = !board.IsAiWhite;
                             break;
                         case 2:
-                            board.IsAIBlack = !board.IsAIBlack;
+                            board.IsAiBlack = !board.IsAiBlack;
                             break;
                         case 3:
                             Pointer = 0;
@@ -76,9 +76,9 @@ namespace Draughts
             {
                 Console.WriteLine(Pointer == 0 ? "> Start <" : "  Start  ");
                 Console.Write(Pointer == 1 ? "> White <" : "  White  ");
-                Console.WriteLine(board.IsAIWhite ? "  AI  " : "  Player  ");
+                Console.WriteLine(board.IsAiWhite ? "  AI  " : "  Player  ");
                 Console.Write(Pointer == 2 ? "> Black <" : "  Black  ");
-                Console.WriteLine(board.IsAIBlack ? "  AI  " : "  Player  ");
+                Console.WriteLine(board.IsAiBlack ? "  AI  " : "  Player  ");
                 Console.WriteLine(Pointer == 3 ? "> Back <" : "  Back  ");
             }
             
