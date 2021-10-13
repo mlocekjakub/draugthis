@@ -16,7 +16,9 @@ namespace Draughts
         public bool IsAIBlack { get; set; }
         public Pawn[,] Fields { get; set; }
 
-        private Coords Cursor { get; set; }
+        public Coords WhiteCursor { get; set; }
+
+        public Coords BlackCursor { get; set; }
 
         public Board(int n)
         {
@@ -28,7 +30,17 @@ namespace Draughts
         public void BoardInit()
         {
             int boardSize = Fields.GetLength(1);
-            Cursor = new Coords(boardSize - 1, 0);
+            if (boardSize % 2 == 0)
+            {
+                WhiteCursor = new Coords(boardSize - 1, 0);
+                BlackCursor = new Coords(0, boardSize - 1);
+            }
+            else
+            {
+                WhiteCursor = new Coords(boardSize - 1, 1);
+                BlackCursor = new Coords(0, boardSize - 2);
+            }
+            
 
             for (int i = 0; i < boardSize; i++)
             {
@@ -64,62 +76,62 @@ namespace Draughts
             }
         }
 
-        public Coords SelectPosition()
+        public Coords SelectPosition(Coords cursor)
         {
             ConsoleKeyInfo _Key;
             while (true)
             {
                 Console.Clear();
-                PrintBoard();
+                PrintBoard(cursor);
                 _Key = Console.ReadKey();
                 switch (_Key.Key)
                 {
                     case ConsoleKey.RightArrow:
-                        if (Cursor.XPos + 2 < Fields.GetLength(0))
+                        if (cursor.XPos + 2 < Fields.GetLength(0))
                         {
-                            Cursor.XPos += 2;
+                            cursor.XPos += 2;
                         }
 
                         break;
                     case ConsoleKey.LeftArrow:
-                        if (Cursor.XPos - 2 >= 0)
+                        if (cursor.XPos - 2 >= 0)
                         {
-                            Cursor.XPos -= 2;
+                            cursor.XPos -= 2;
                         }
 
                         break;
                     case ConsoleKey.UpArrow:
-                        if (Cursor.YPos - 1 >= 0)
+                        if (cursor.YPos - 1 >= 0)
                         {
-                            Cursor.YPos--;
-                            if (Cursor.XPos - 1 >= 0)
+                            cursor.YPos--;
+                            if (cursor.XPos - 1 >= 0)
                             {
-                                Cursor.XPos--;
+                                cursor.XPos--;
                             }
                             else
                             {
-                                Cursor.XPos++;
+                                cursor.XPos++;
                             }
                         }
 
                         break;
                     case ConsoleKey.DownArrow:
-                        if (Cursor.YPos + 1 < Fields.GetLength(0))
+                        if (cursor.YPos + 1 < Fields.GetLength(0))
                         {
-                            Cursor.YPos++;
-                            if (Cursor.XPos + 1 < this.Fields.GetLength(0))
+                            cursor.YPos++;
+                            if (cursor.XPos + 1 < this.Fields.GetLength(0))
                             {
-                                Cursor.XPos++;
+                                cursor.XPos++;
                             }
                             else
                             {
-                                Cursor.XPos--;
+                                cursor.XPos--;
                             }
                         }
 
                         break;
                     case ConsoleKey.Enter:
-                        return new Coords(Cursor.YPos, Cursor.XPos);
+                        return new Coords(cursor.YPos, cursor.XPos);
                     case ConsoleKey.Escape:
                         return null;
                     case ConsoleKey.Backspace:
@@ -144,9 +156,16 @@ namespace Draughts
             }
         }
 
-        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none")
+        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none", bool chainKill=false)
         {
-            _rewind.AddTurn(startingPos, endingPos, killedColor);
+            if (chainKill)
+            {
+                _rewind.AddMove(new Move(startingPos, endingPos, killedColor));
+            }
+            else
+            {
+                _rewind.AddTurn(new Move(startingPos, endingPos, killedColor));
+            }
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
             RemovePawn(startingPos);
             UnhighlightPawn(endingPos);
@@ -178,17 +197,22 @@ namespace Draughts
         {
             if (!_rewind.IsEmpty())
             {
-                var turn = _rewind.GetLastMove();
-                MoveBack(turn.EndingPos, turn.StartingPos);
-                if (turn.KilledColour != "none")
+                var turn = _rewind.GetLastTurn();
+                while (turn.Moves.Count != 0)
                 {
-                    var pos = turn.GetKilledPawnCoords();
-                    Fields[pos.YPos, pos.XPos] = new Pawn(turn.KilledColour);
+                    Move move = turn.Moves.Pop();
+                    MoveBack(move.EndingPos, move.StartingPos);
+                    if (move.KilledColour != "none")
+                    {
+                        var pos = move.GetKilledPawnCoords();
+                        Fields[pos.YPos, pos.XPos] = new Pawn(move.KilledColour);
+                    }
                 }
             }
         }
 
-        public void PrintBoard()
+
+        public void PrintBoard(Coords cursor)
         {
             ConsoleColor backgroundColor = Console.BackgroundColor;
             ConsoleColor foregroundColor = Console.ForegroundColor;
@@ -227,7 +251,7 @@ namespace Draughts
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
 
-                    if (i == this.Cursor.YPos & j == this.Cursor.XPos)
+                    if (i == cursor.YPos & j == cursor.XPos)
                     {
                         Console.BackgroundColor = ConsoleColor.DarkCyan;
                     }

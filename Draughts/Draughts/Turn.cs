@@ -8,25 +8,16 @@ namespace Draughts
 {
     public class Turn
     {
-        public Coords StartingPos { get; set; }
-        public Coords EndingPos { get; set; }
-        public string KilledColour { get; set; } = "none";
-        public Turn(Coords startingPos, Coords endingPos, string killedColor = "white")
+        public Stack<Move> Moves { get; set; } = new Stack<Move>();
+
+        public Turn(Move move)
         {
-            StartingPos = startingPos;
-            EndingPos = endingPos;
-            KilledColour = killedColor;
+            Moves.Push(move);
         }
-        public Coords GetKilledPawnCoords()
+
+        public void AddMove(Move move)
         {
-            if (KilledColour != "none")
-            {
-                return new Coords((StartingPos.YPos + EndingPos.YPos) / 2, (StartingPos.XPos + EndingPos.XPos) / 2);
-            }
-            else
-            {
-                return null;
-            }
+            Moves.Push(move);
         }
     }
 }
