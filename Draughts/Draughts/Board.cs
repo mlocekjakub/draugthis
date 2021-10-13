@@ -54,7 +54,7 @@ namespace Draughts
                     {
                         if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                         {
-                            Fields[i, j] = new Pawn("black");
+                            Fields[i, j] = new Pawn("black", i, j);
                         }
                         else
                         {
@@ -65,7 +65,7 @@ namespace Draughts
                     {
                         if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                         {
-                            Fields[i, j] = new Pawn("white");
+                            Fields[i, j] = new Pawn("white",i , j);
                         }
                         else
                         {
@@ -160,28 +160,44 @@ namespace Draughts
             }
         }
 
-        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none", bool chainKill=false)
+        public void MovePawn(Board board, Coords startingPos, Coords endingPos,  Pawn killedPawn = null, bool chainKill=false)
         {
             if (chainKill)
             {
-                _rewind.AddMove(new Move(startingPos, endingPos, killedColor));
+                _rewind.AddMove(new Move(startingPos, endingPos, killedPawn));
             }
             else
             {
-                _rewind.AddTurn(new Move(startingPos, endingPos, killedColor));
+                _rewind.AddTurn(new Move(startingPos, endingPos, killedPawn));
             }
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
+            Fields[endingPos.YPos, endingPos.XPos].YPos = endingPos.YPos;
+            Fields[endingPos.YPos, endingPos.XPos].XPos = endingPos.XPos;
             RemovePawn(startingPos);
             UnhighlightPawn(endingPos);
+            if (killedPawn != null)
+            {
+                RemovePawn(new Coords(killedPawn.YPos, killedPawn.XPos));
+            }
+            if (board.Fields[endingPos.YPos, endingPos.XPos].Color == "white" && endingPos.YPos == 0 ||
+                board.Fields[endingPos.YPos, endingPos.XPos].Color == "black" && endingPos.YPos == board.Fields.GetLength(0) - 1)
+            {
+                board.Fields[endingPos.YPos, endingPos.XPos].IsCrowned = true;
+            }
         }
 
-        public void MoveBack(Coords startingPos, Coords endingPos)
+        public void MoveBack(Board board, Coords startingPos, Coords endingPos)
         {
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
+            if (board.Fields[startingPos.YPos, startingPos.XPos].Color == "white" && startingPos.YPos == 0 ||
+                board.Fields[startingPos.YPos, startingPos.XPos].Color == "black" && startingPos.YPos == board.Fields.GetLength(0) - 1)
+            {
+                board.Fields[startingPos.YPos, startingPos.XPos].IsCrowned = false;
+            }
             RemovePawn(startingPos);
         }
 
-        public void RemovePawn(Coords Pos)
+        private void RemovePawn(Coords Pos)
         {
             Fields[Pos.YPos, Pos.XPos] = null;
         }
@@ -197,7 +213,7 @@ namespace Draughts
             Fields[Pos.YPos, Pos.XPos].Highlight = false;
         }
 
-        public void Undo()
+        public void Undo(Board board)
         {
             if (!_rewind.IsEmpty())
             {
@@ -205,16 +221,15 @@ namespace Draughts
                 while (turn.Moves.Count != 0)
                 {
                     Move move = turn.Moves.Pop();
-                    MoveBack(move.EndingPos, move.StartingPos);
-                    if (move.KilledColour != "none")
+                    MoveBack(board, move.EndingPos, move.StartingPos);
+                    if (move.KilledPawn != null)
                     {
-                        var pos = move.GetKilledPawnCoords();
-                        Fields[pos.YPos, pos.XPos] = new Pawn(move.KilledColour);
+                        var pawnToRestore = move.KilledPawn;
+                        Fields[pawnToRestore.YPos, pawnToRestore.XPos] = pawnToRestore;
                     }
                 }
             }
         }
-
 
         public void PrintBoard(Coords cursor)
         {
@@ -269,7 +284,7 @@ namespace Draughts
 
                         Console.ForegroundColor = this.Fields[i, j].FontColor;
                         
-                        Console.Write(this.Fields[i, j].isCrowned?" ♀ ":" ○ ");
+                        Console.Write(this.Fields[i, j].IsCrowned?" ♀ ":" ○ ");
                         
                     }
                     else

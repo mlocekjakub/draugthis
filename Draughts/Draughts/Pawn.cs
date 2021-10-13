@@ -11,12 +11,18 @@ namespace Draughts
         public string Color { get; set; }
         public ConsoleColor FontColor { get; set; }
         public bool Highlight { get; set; } = false;
-        public bool isCrowned { get; set; }
-        
-        public Pawn(string color)
+        public bool IsCrowned { get; set; }
+
+        public int YPos { get; set; }
+        public int XPos { get; set; }
+
+
+        public Pawn(string color, int yPos, int xPos)
         {
+            YPos = yPos;
+            XPos = xPos;
             Color = color;
-            isCrowned = false;
+            IsCrowned = false;
             if (color == "white")
             {
                 FontColor = ConsoleColor.White;
