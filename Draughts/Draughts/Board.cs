@@ -81,13 +81,13 @@ namespace Draughts
             }
         }
 
-        public Coords SelectPosition(Coords cursor)
+        public Coords SelectPosition(Coords cursor, string color)
         {
             ConsoleKeyInfo _Key;
             while (true)
             {
                 Console.Clear();
-                PrintBoard(cursor);
+                PrintBoard(color, cursor);
                 _Key = Console.ReadKey();
                 switch (_Key.Key)
                 {
@@ -137,10 +137,12 @@ namespace Draughts
                         break;
                     case ConsoleKey.Enter:
                         return new Coords(cursor.YPos, cursor.XPos);
-                    case ConsoleKey.Escape:
+                    case ConsoleKey.C:
                         return null;
                     case ConsoleKey.Backspace:
                         return new Coords(-10, -10);
+                    case ConsoleKey.Escape:
+                        return new Coords(-69, -69);
                 }
             }
         }
@@ -161,13 +163,9 @@ namespace Draughts
             }
         }
 
-        public void MovePawn(Board board, Coords startingPos, Coords endingPos,  Pawn killedPawn = null, bool chainKill=false)
+        public void MovePawn(Board board, Coords startingPos, Coords endingPos, Pawn killedPawn = null,
+            bool chainKill = false)
         {
-            Console.WriteLine(board);
-            Console.WriteLine($"spos {startingPos.XPos} {startingPos.YPos}");
-            Console.WriteLine($"epos {endingPos.XPos} {endingPos.YPos}");
-            Console.WriteLine(killedPawn);
-            
             if (chainKill)
             {
                 _rewind.AddMove(new Move(startingPos, endingPos, killedPawn));
@@ -176,7 +174,6 @@ namespace Draughts
             {
                 _rewind.AddTurn(new Move(startingPos, endingPos, killedPawn));
             }
-
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
             Fields[endingPos.YPos, endingPos.XPos].Position.YPos = endingPos.YPos;
             Fields[endingPos.YPos, endingPos.XPos].Position.XPos = endingPos.XPos;
@@ -185,9 +182,19 @@ namespace Draughts
             if (killedPawn != null)
             {
                 RemovePawn(new Coords(killedPawn.Position.YPos, killedPawn.Position.XPos));
+                if (killedPawn.Color == "white")
+                {
+                    board.AmountOfWhitePawns--;
+                }
+                else
+                {
+                    board.AmountOfBlackPawns--;
+                }
             }
+
             if (board.Fields[endingPos.YPos, endingPos.XPos].Color == "white" && endingPos.YPos == 0 ||
-                board.Fields[endingPos.YPos, endingPos.XPos].Color == "black" && endingPos.YPos == board.Fields.GetLength(0) - 1)
+                board.Fields[endingPos.YPos, endingPos.XPos].Color == "black" &&
+                endingPos.YPos == board.Fields.GetLength(0) - 1)
             {
                 board.Fields[endingPos.YPos, endingPos.XPos].IsCrowned = true;
             }
@@ -197,10 +204,12 @@ namespace Draughts
         {
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
             if (board.Fields[startingPos.YPos, startingPos.XPos].Color == "white" && startingPos.YPos == 0 ||
-                board.Fields[startingPos.YPos, startingPos.XPos].Color == "black" && startingPos.YPos == board.Fields.GetLength(0) - 1)
+                board.Fields[startingPos.YPos, startingPos.XPos].Color == "black" &&
+                startingPos.YPos == board.Fields.GetLength(0) - 1)
             {
                 board.Fields[startingPos.YPos, startingPos.XPos].IsCrowned = false;
             }
+
             RemovePawn(startingPos);
         }
 
@@ -241,23 +250,29 @@ namespace Draughts
             }
         }
 
-        public void PrintBoard(Coords cursor = null)
+        public void PrintBoard(string color, Coords cursor = null)
         {
             ConsoleColor backgroundColor = Console.BackgroundColor;
             ConsoleColor foregroundColor = Console.ForegroundColor;
             Console.OutputEncoding = System.Text.Encoding.Unicode;
+            int windowWidth = Console.LargestWindowWidth;
+            string margin = String.Concat(Enumerable.Repeat(" ", windowWidth / (windowWidth/38)));
             char columnLetter = 'A';
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.Write(margin);
             Console.Write("    ");
             for (int i = 0; i < Fields.GetLength(0); i++)
             {
-                Console.Write($" {columnLetter++} ");
+                Console.Write($" {columnLetter++}  ");
             }
-
+    
             Console.WriteLine();
             for (int i = 0; i < Fields.GetLength(0); i++)
             {
                 Console.BackgroundColor = backgroundColor;
                 Console.ForegroundColor = foregroundColor;
+                Console.Write(margin);
                 if (i + 1 < 10)
                 {
                     Console.Write($"  {i + 1} ");
@@ -271,13 +286,13 @@ namespace Draughts
                 {
                     if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                     {
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
                     }
                     else
                     {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                     }
 
                     if (cursor != null && i == cursor.YPos & j == cursor.XPos)
@@ -292,13 +307,11 @@ namespace Draughts
                             Console.BackgroundColor = ConsoleColor.Cyan;
                         }
 
-                        Console.ForegroundColor = Fields[i, j].FontColor;
-
-                        Console.Write(Fields[i, j].IsCrowned ? " ♀ " : " ○ ");
+                        Console.Write(Fields[i, j].IsCrowned ? Fields[i, j].CrownedIcon : Fields[i, j].Icon);
                     }
                     else
                     {
-                        Console.Write("   ");
+                        Console.Write("    ");
                     }
                 }
 
@@ -307,6 +320,13 @@ namespace Draughts
 
             Console.BackgroundColor = backgroundColor;
             Console.ForegroundColor = foregroundColor;
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.Write(margin);
+            Console.Write("              ");
+            Console.Write(color == "white" ? "Now is Doggy turn!" : "Now is Kitty turn!");
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }

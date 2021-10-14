@@ -9,12 +9,11 @@ namespace Draughts
     public class Pawn
     {
         public string Color { get; set; }
-        public ConsoleColor FontColor { get; set; }
+        public string Icon { get; set; }
+        public string CrownedIcon { get; set; }
         public bool Highlight { get; set; } = false;
         public bool IsCrowned { get; set; }
-
         public Coords Position { get; set; }
-
         public Pawn(string color,Coords position)
         {
             Color = color;
@@ -22,14 +21,14 @@ namespace Draughts
             Position = position;
             if (color == "white")
             {
-                FontColor = ConsoleColor.White;
+                Icon = " 🐕 ";
+                CrownedIcon = " 🐺 ";
             }
             else
             {
-                FontColor = ConsoleColor.Black;
+                Icon = " 🐈 ";
+                CrownedIcon = " 🐯 ";
             }
         }
-        
-        
     }
 }

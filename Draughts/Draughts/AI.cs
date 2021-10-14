@@ -225,10 +225,10 @@ namespace Draughts
         }
 
 
-        public void AiMove(Board board)
+        public bool AiMove(Board board)
         {
             Console.Clear();
-            board.PrintBoard();
+            board.PrintBoard(Color);
             UnhighlightAllOfThem(board);
             List<Pawn> listOfPawns = GeneratePawnsToMove(board);
             Pawn pawn = RandomPawn(listOfPawns);
@@ -245,12 +245,17 @@ namespace Draughts
                 {
                     board.Undo(board);
                     Console.Clear();
-                    board.PrintBoard();
+                    board.PrintBoard(Color);
+                }
+                else if (key == ConsoleKey.Escape)
+                {
+                    return true;
                 }
             }
 
             if (killed)
             {
+                
                 board.MovePawn(board, new Coords(pawn.Position.YPos, pawn.Position.XPos), endingCoords, 
                     board.Fields[toDelete.YPos, toDelete.XPos]);
             }
@@ -260,6 +265,7 @@ namespace Draughts
             }
 
             pawn.Highlight = true;
+            return false;
         }
 
         public void UnhighlightAllOfThem(Board board)

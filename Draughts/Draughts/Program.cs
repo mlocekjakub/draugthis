@@ -12,12 +12,13 @@ namespace Draughts
         {
             var game = new Game();
             Menu menu = new Menu();
-            var board = menu.RunMenu();
-            game.Start(board);
-
+            while (true)
+            {
+                var board = menu.RunMenu();
+                game.Start(board);
+            }
         }
-
+        
     }
-
     
 }
