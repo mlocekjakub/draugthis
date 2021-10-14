@@ -10,23 +10,23 @@ namespace Draughts
     {
         public Coords StartingPos { get; set; }
         public Coords EndingPos { get; set; }
-        public string KilledColour { get; set; } = "none";
-        public Move(Coords startingPos, Coords endingPos, string killedColor = "white")
+        public Pawn KilledPawn { get; set; }
+        public Move(Coords startingPos, Coords endingPos, Pawn killedPawn = null)
         {
             StartingPos = startingPos;
             EndingPos = endingPos;
-            KilledColour = killedColor;
+            KilledPawn = killedPawn;
         }
-        public Coords GetKilledPawnCoords()
-        {
-            if (KilledColour != "none")
-            {
-                return new Coords((StartingPos.YPos + EndingPos.YPos) / 2, (StartingPos.XPos + EndingPos.XPos) / 2);
-            }
-            else
-            {
-                return null;
-            }
-        }
+        //public Coords GetKilledPawnCoords()
+        //{
+        //    if (KilledColour != null)
+        //    {
+        //        return new Coords((StartingPos.YPos + EndingPos.YPos) / 2, (StartingPos.XPos + EndingPos.XPos) / 2);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }

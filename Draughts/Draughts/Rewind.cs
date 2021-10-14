@@ -8,11 +8,11 @@ namespace Draughts
 {
     public class Rewind
     {
-        private Stack<Turn> _turns = new Stack<Turn>();
+        public Stack<Turn> _turns = new Stack<Turn>();
 
         public void AddTurn(Move move)
         {
-                _turns.Push(new Turn(move));
+            _turns.Push(new Turn(move));
         }
         public Turn GetLastTurn()
         {
