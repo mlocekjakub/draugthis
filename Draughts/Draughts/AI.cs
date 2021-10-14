@@ -191,7 +191,7 @@ namespace Draughts
         }
 
 
-        public void AiMove(Board board)
+        public bool AiMove(Board board)
         {
             Console.Clear();
             board.PrintBoard();
@@ -212,18 +212,24 @@ namespace Draughts
                     Console.Clear();
                     board.PrintBoard();
                 }
+                else if (key == ConsoleKey.Escape)
+                {
+                    return true;
+                }
             }
 
             if (killed)
             {
-                board.MovePawn(board, pawn.Position, endingCoords, board.Fields[toDelete.YPos, toDelete.XPos]);
+                
+                board.MovePawn(board, new Coords(pawn.Position.YPos, pawn.Position.XPos), endingCoords, board.Fields[toDelete.YPos, toDelete.XPos]);
             }
             else
             {
-                board.MovePawn(board,  endingCoords, pawn.Position);
+                board.MovePawn(board, new Coords (pawn.Position.YPos, pawn.Position.XPos), endingCoords);
             }
+            return false;
 
-            pawn.Position = endingCoords;
+            //pawn.Position = endingCoords;
         }
     }
 }

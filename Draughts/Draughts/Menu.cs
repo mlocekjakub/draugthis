@@ -21,6 +21,7 @@ namespace Draughts
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Choose board size between 10 and 20");
                 bool success = false;
                 string output;
@@ -56,6 +57,9 @@ namespace Draughts
                             break;
                         case 3:
                             Pointer = 0;
+                            return BuildDemoMap();
+                        case 4:
+                            Pointer = 0;
                             board = RunMenu();
                             break;
                     }
@@ -63,11 +67,30 @@ namespace Draughts
             }
             return board;
         }
-        
+
+        private Board BuildDemoMap()
+        {
+            var board = new Board(10);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    board.Fields[i, j] = null;
+                }
+            }
+            board.Fields[8, 3] = new Pawn("white", new Coords(8, 3));
+            board.Fields[6, 3] = new Pawn("white", new Coords(6, 3));
+            board.Fields[6, 3].IsCrowned = true;
+            board.Fields[6, 5] = new Pawn("white", new Coords(6, 5));
+            board.Fields[8, 5] = new Pawn("white", new Coords(8, 5));
+            board.Fields[5, 4] = new Pawn("black", new Coords(5, 4));
+            board.Fields[2, 1] = new Pawn("white", new Coords(2, 1));
+            return board;
+        }
+
         public void PrintMenu(int menu)
         {
-            Console.WriteLine("hello kurwa");
-            Console.WriteLine("Choose your kurwa option:"); // usuń kurwa
+            Console.WriteLine("Choose your option:");
             if (menu == 0)
             {
                 Console.WriteLine(Pointer == 0 ? "> Start <" : "  Start  ");
@@ -79,7 +102,8 @@ namespace Draughts
                 Console.WriteLine(board.IsAiWhite ? "  AI  " : "  Player  ");
                 Console.Write(Pointer == 2 ? "> Black <" : "  Black  ");
                 Console.WriteLine(board.IsAiBlack ? "  AI  " : "  Player  ");
-                Console.WriteLine(Pointer == 3 ? "> Back <" : "  Back  ");
+                Console.WriteLine(Pointer == 3 ? "> DEMO <" : "  DEMO  ");
+                Console.WriteLine(Pointer == 4 ? "> Back <" : "  Back  ");
             }
             
         }
@@ -94,7 +118,7 @@ namespace Draughts
                     numberOfOptions = 2;
                     break;
                 case 1:
-                    numberOfOptions = 4;
+                    numberOfOptions = 5;
                     break;
             }
             while (true)

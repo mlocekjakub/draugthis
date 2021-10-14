@@ -137,10 +137,12 @@ namespace Draughts
                         break;
                     case ConsoleKey.Enter:
                         return new Coords(cursor.YPos, cursor.XPos);
-                    case ConsoleKey.Escape:
+                    case ConsoleKey.C:
                         return null;
                     case ConsoleKey.Backspace:
                         return new Coords(-10, -10);
+                    case ConsoleKey.Escape:
+                        return new Coords(-69, -69);
                 }
             }
         }
@@ -163,11 +165,6 @@ namespace Draughts
 
         public void MovePawn(Board board, Coords startingPos, Coords endingPos,  Pawn killedPawn = null, bool chainKill=false)
         {
-            Console.WriteLine(board);
-            Console.WriteLine($"spos {startingPos.XPos} {startingPos.YPos}");
-            Console.WriteLine($"epos {endingPos.XPos} {endingPos.YPos}");
-            Console.WriteLine(killedPawn);
-            
             if (chainKill)
             {
                 _rewind.AddMove(new Move(startingPos, endingPos, killedPawn));
@@ -176,7 +173,6 @@ namespace Draughts
             {
                 _rewind.AddTurn(new Move(startingPos, endingPos, killedPawn));
             }
-
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
             Fields[endingPos.YPos, endingPos.XPos].Position.YPos = endingPos.YPos;
             Fields[endingPos.YPos, endingPos.XPos].Position.XPos = endingPos.XPos;
