@@ -184,10 +184,12 @@ namespace Draughts
                 RemovePawn(new Coords(killedPawn.Position.YPos, killedPawn.Position.XPos));
                 if (killedPawn.Color == "white")
                 {
+                    killedPawn.sound.Play();
                     board.AmountOfWhitePawns--;
                 }
                 else
                 {
+                    killedPawn.sound.Play();
                     board.AmountOfBlackPawns--;
                 }
             }

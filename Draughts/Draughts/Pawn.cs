@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 namespace Draughts
 {
     public class Pawn
-    {
+    {   
+
+        public System.Media.SoundPlayer sound;
+        
         public string Color { get; set; }
         public string Icon { get; set; }
         public string CrownedIcon { get; set; }
@@ -23,11 +26,13 @@ namespace Draughts
             {
                 Icon = " 🐕 ";
                 CrownedIcon = " 🐺 ";
+                sound = new System.Media.SoundPlayer(@"..\..\dog.wav");
             }
             else
             {
                 Icon = " 🐈 ";
                 CrownedIcon = " 🐯 ";
+                sound = new System.Media.SoundPlayer(@"..\..\cat.wav");
             }
         }
     }
