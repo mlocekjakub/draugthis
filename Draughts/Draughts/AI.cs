@@ -205,23 +205,22 @@ namespace Draughts
 
             while (key != ConsoleKey.Enter)
             {
-                
                 key = Console.ReadKey().Key;
                 if (key == ConsoleKey.Backspace)
                 {
-                    board.Undo();
+                    board.Undo(board);
                     Console.Clear();
                     board.PrintBoard();
                 }
-            }            
+            }
+
             if (killed)
             {
-                board.RemovePawn(toDelete);
-                board.MovePawn(pawn.Position, endingCoords, Enemy);
+                board.MovePawn(board, pawn.Position, endingCoords, board.Fields[toDelete.YPos, toDelete.XPos]);
             }
             else
             {
-                board.MovePawn(pawn.Position, endingCoords);
+                board.MovePawn(board,  endingCoords, pawn.Position);
             }
 
             pawn.Position = endingCoords;

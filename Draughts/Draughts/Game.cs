@@ -52,7 +52,7 @@ namespace Draughts
                 }
                 else if (startingPos.XPos == -10)
                 {
-                    board.Undo();
+                    board.Undo(board);
                     undo = true;
                     break;
                 }
@@ -75,23 +75,129 @@ namespace Draughts
                 else if (endingPos.XPos == -10)
                 {
                     board.UnhighlightPawn(startingPos);
-                    board.Undo();
+                    board.Undo(board);
                     break;
                 }
                 if (board.Fields[endingPos.YPos, endingPos.XPos] == null)
                 {
-                    success = ValidateMove(board, startingPos, endingPos, success, enemy);
+                    if (board.Fields[startingPos.YPos, startingPos.XPos].IsCrowned)
+                    {
+                        success = ValidateQueenMove(board, startingPos, endingPos, success, enemy);
+                    }
+                    else
+                    {
+                        success = ValidatePawnMove(board, startingPos, endingPos, success, enemy);
+                    }
                 }
             }
         }
 
-        private bool ValidateMove(Board board, Coords startingPos, Coords endingPos, bool success, string enemy)
+        private bool ValidateQueenMove(Board board, Coords startingPos, Coords endingPos, bool success, string enemy)
+        {
+            if (Math.Abs(startingPos.YPos - endingPos.YPos) == Math.Abs(startingPos.XPos - endingPos.XPos))
+            {
+                List<Coords> fieldsInBetween = GetAllCoordsInBetween(startingPos, endingPos);
+                bool simpleMove = true;
+                foreach (Coords field in fieldsInBetween)
+                {
+                    if (board.Fields[field.YPos, field.XPos] is Pawn)
+                    {
+                        simpleMove = false;
+                    }
+                }
+                if (simpleMove)
+                {
+                    board.MovePawn(board, startingPos, endingPos);
+                    return true;
+                }
+                Coords lastElement = fieldsInBetween[fieldsInBetween.Count - 1];
+                if (board.Fields[lastElement.YPos, lastElement.XPos] is Pawn)
+                {
+                    fieldsInBetween.Remove(lastElement);
+                    bool kill = true;
+                    foreach (Coords field in fieldsInBetween)
+                    {
+                        if (board.Fields[field.YPos, field.XPos] is Pawn)
+                        {
+                            kill = false;
+                        }
+                    }
+                    if (kill)
+                    {
+                        board.MovePawn(board, startingPos, endingPos, board.Fields[lastElement.YPos, lastElement.XPos]);
+                        success = true;
+                    }
+                }
+            }
+            return success;
+        }
+
+        public List<Coords> GetAllCoordsInBetween(Coords startingPos, Coords endingPos)
+        {
+            List<Coords> output = new List<Coords>();
+            if (startingPos.YPos < endingPos.YPos && startingPos.XPos < endingPos.XPos)
+            {
+                int y = startingPos.YPos + 1;
+                int x = startingPos.XPos + 1;
+                while (y != endingPos.YPos)
+                {
+                    output.Add(new Coords(y, x));
+                    y++;
+                    x++;
+                }
+
+                return output;
+            }
+            else if (startingPos.YPos > endingPos.YPos && startingPos.XPos > endingPos.XPos)
+            {
+                int y = startingPos.YPos - 1;
+                int x = startingPos.XPos - 1;
+                while (y != endingPos.YPos)
+                {
+                    output.Add(new Coords(y, x));
+                    y--;
+                    x--;
+                }
+
+                return output;
+            }
+            else if (startingPos.YPos < endingPos.YPos && startingPos.XPos > endingPos.XPos)
+            {
+                int y = startingPos.YPos + 1;
+                int x = startingPos.XPos - 1;
+                while (y != endingPos.YPos)
+                {
+                    output.Add(new Coords(y, x));
+                    y++;
+                    x--;
+                }
+
+                return output;
+            }
+            else if (startingPos.YPos > endingPos.YPos && startingPos.XPos < endingPos.XPos)
+            {
+                int y = startingPos.YPos - 1;
+                int x = startingPos.XPos + 1;
+                while (y != endingPos.YPos)
+                {
+                    output.Add(new Coords(y, x));
+                    y--;
+                    x++;
+                }
+
+                return output;
+            }
+
+            return output;
+        }
+
+        private bool ValidatePawnMove(Board board, Coords startingPos, Coords endingPos, bool success, string enemy)
         {
             if (enemy == "black")
             {
                 if (endingPos.YPos == startingPos.YPos - 1 && Math.Abs(endingPos.XPos - startingPos.XPos) == 1)
                 {
-                    board.MovePawn(startingPos, endingPos);
+                    board.MovePawn(board, startingPos, endingPos);
                     success = true;
                 }
                 else if ((endingPos.YPos == startingPos.YPos - 2 && Math.Abs(endingPos.XPos - startingPos.XPos) == 2) &&
@@ -99,8 +205,7 @@ namespace Draughts
                           board.Fields[(startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2].Color == enemy)
                 {
                     Coords toRemove = new Coords((startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2);
-                    board.RemovePawn(toRemove);
-                    board.MovePawn(startingPos, endingPos, enemy);
+                    board.MovePawn(board, startingPos, endingPos, board.Fields[toRemove.YPos, toRemove.XPos]);
                     bool killed = true;
                     while (killed)
                     {
@@ -113,7 +218,7 @@ namespace Draughts
             {
                 if (endingPos.YPos == startingPos.YPos + 1 && Math.Abs(endingPos.XPos - startingPos.XPos) == 1)
                 {
-                    board.MovePawn(startingPos, endingPos);
+                    board.MovePawn(board, startingPos, endingPos);
                     success = true;
                 }
                 else if ((endingPos.YPos == startingPos.YPos + 2 && Math.Abs(endingPos.XPos - startingPos.XPos) == 2) &&
@@ -121,8 +226,7 @@ namespace Draughts
                           board.Fields[(startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2].Color == enemy)
                 {
                     Coords toRemove = new Coords((startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2);
-                    board.RemovePawn(toRemove);
-                    board.MovePawn(startingPos, endingPos, enemy);
+                    board.MovePawn(board, startingPos, endingPos, board.Fields[toRemove.YPos, toRemove.XPos]);
                     bool killed = true;
                     while (killed)
                     {
@@ -151,7 +255,9 @@ namespace Draughts
                 board.Fields[endingPos.YPos + 2, endingPos.XPos - 2] == null;
             if (statement1 || statement2 || statement3 || statement4)
             {
+                board.Fields[endingPos.YPos, endingPos.XPos].IsCrowned = false;
                 endingPos = ChainKill(board, endingPos, enemy);
+                
             }
             else
             {
@@ -177,8 +283,7 @@ namespace Draughts
                       board.Fields[(startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2].Color == enemy))
                 {
                     Coords toRemove = new Coords((startingPos.YPos + endingPos.YPos) / 2, (startingPos.XPos + endingPos.XPos) / 2);
-                    board.RemovePawn(toRemove);
-                    board.MovePawn(startingPos, endingPos, enemy, chainKill:true);
+                    board.MovePawn(board, startingPos, endingPos, board.Fields[toRemove.YPos, toRemove.XPos], chainKill:true);
                     break;
                 }
             }

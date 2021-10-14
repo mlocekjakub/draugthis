@@ -12,7 +12,7 @@ namespace Draughts
 
         public void AddTurn(Move move)
         {
-                _turns.Push(new Turn(move));
+            _turns.Push(new Turn(move));
         }
         public Turn GetLastTurn()
         {

@@ -161,29 +161,50 @@ namespace Draughts
             }
         }
 
-        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none", bool chainKill = false)
+        public void MovePawn(Board board, Coords startingPos, Coords endingPos,  Pawn killedPawn = null, bool chainKill=false)
         {
+            Console.WriteLine(board);
+            Console.WriteLine($"spos {startingPos.XPos} {startingPos.YPos}");
+            Console.WriteLine($"epos {endingPos.XPos} {endingPos.YPos}");
+            Console.WriteLine(killedPawn);
+            
             if (chainKill)
             {
-                _rewind.AddMove(new Move(startingPos, endingPos, killedColor));
+                _rewind.AddMove(new Move(startingPos, endingPos, killedPawn));
             }
             else
             {
-                _rewind.AddTurn(new Move(startingPos, endingPos, killedColor));
+                _rewind.AddTurn(new Move(startingPos, endingPos, killedPawn));
             }
 
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
+            Fields[endingPos.YPos, endingPos.XPos].Position.YPos = endingPos.YPos;
+            Fields[endingPos.YPos, endingPos.XPos].Position.XPos = endingPos.XPos;
             RemovePawn(startingPos);
             UnhighlightPawn(endingPos);
+            if (killedPawn != null)
+            {
+                RemovePawn(new Coords(killedPawn.Position.YPos, killedPawn.Position.XPos));
+            }
+            if (board.Fields[endingPos.YPos, endingPos.XPos].Color == "white" && endingPos.YPos == 0 ||
+                board.Fields[endingPos.YPos, endingPos.XPos].Color == "black" && endingPos.YPos == board.Fields.GetLength(0) - 1)
+            {
+                board.Fields[endingPos.YPos, endingPos.XPos].IsCrowned = true;
+            }
         }
 
-        public void MoveBack(Coords startingPos, Coords endingPos)
+        public void MoveBack(Board board, Coords startingPos, Coords endingPos)
         {
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
+            if (board.Fields[startingPos.YPos, startingPos.XPos].Color == "white" && startingPos.YPos == 0 ||
+                board.Fields[startingPos.YPos, startingPos.XPos].Color == "black" && startingPos.YPos == board.Fields.GetLength(0) - 1)
+            {
+                board.Fields[startingPos.YPos, startingPos.XPos].IsCrowned = false;
+            }
             RemovePawn(startingPos);
         }
 
-        public void RemovePawn(Coords Pos)
+        private void RemovePawn(Coords Pos)
         {
             Fields[Pos.YPos, Pos.XPos] = null;
         }
@@ -196,28 +217,29 @@ namespace Draughts
 
         public void UnhighlightPawn(Coords Pos)
         {
-            Fields[Pos.YPos, Pos.XPos].Highlight = false;
+            if (Fields[Pos.YPos, Pos.XPos] != null)
+            {
+                Fields[Pos.YPos, Pos.XPos].Highlight = false;
+            }
         }
 
-        public void Undo()
+        public void Undo(Board board)
         {
-            Console.WriteLine(_rewind._turns.Count);
             if (!_rewind.IsEmpty())
             {
                 var turn = _rewind.GetLastTurn();
                 while (turn.Moves.Count != 0)
                 {
                     Move move = turn.Moves.Pop();
-                    MoveBack(move.EndingPos, move.StartingPos);
-                    if (move.KilledColour != "none")
+                    MoveBack(board, move.EndingPos, move.StartingPos);
+                    if (move.KilledPawn != null)
                     {
-                        var pos = move.GetKilledPawnCoords();
-                        Fields[pos.YPos, pos.XPos] = new Pawn(move.KilledColour, new Coords(pos.YPos, pos.XPos));
+                        var pawnToRestore = move.KilledPawn;
+                        Fields[pawnToRestore.Position.YPos, pawnToRestore.Position.XPos] = pawnToRestore;
                     }
                 }
             }
         }
-
 
         public void PrintBoard(Coords cursor = null)
         {
