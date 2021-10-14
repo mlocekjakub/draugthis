@@ -9,41 +9,68 @@ namespace Draughts
 {
     public class Game
     {
-        
         public string Winner { get; set; } = "tie";
         public void Start(Board board)
         {
+            int windowWidth = Console.LargestWindowWidth;
+            string margin = String.Concat(Enumerable.Repeat(" ", windowWidth / (windowWidth/38)));
             AI aiWhite = new AI("white");
             AI aiBlack = new AI("black");
+            bool escape = false;
             while (!CheckForWinnersOrTie(board))
             {
                 if (!board.IsAiWhite)
                 {
-                    MakeAMove(board, "white");
+                    escape = MakeAMove(board, "white");
+                    if (escape)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    aiWhite.AiMove(board);
+                    escape = aiWhite.AiMove(board);
+                    if (escape)
+                    {
+                        break;
+                    }
+                }
+                if (CheckForWinnersOrTie(board))
+                {
+                    break;
                 }
                 if (!board.IsAiBlack)
                 {
-                    MakeAMove(board, "black");
+                    escape = MakeAMove(board, "black");
+                    if (escape)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    aiBlack.AiMove(board);
+                    escape = aiBlack.AiMove(board);
+                    if (escape)
+                    {
+                        break;
+                    }
                 }
             }
+            Console.Write(margin);
             Console.WriteLine(Winner != "tie" ? $"{Winner} wins!!!" : $"There's a {Winner}!!!");
+            Console.Write(margin);
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
-        private void MakeAMove(Board board, string color)
+        private bool MakeAMove(Board board, string color)
         {
             Coords startingPos = new Coords(-1, -1);
             Coords endingPos;
             bool success = false;
             bool undo = false;
             string enemy = color == "white" ? "black" : "white";
+
             while (!success)
             {
                 startingPos = color == "white" ? board.SelectPosition(board.WhiteCursor, color) : board.SelectPosition(board.BlackCursor, color);
@@ -56,6 +83,10 @@ namespace Draughts
                     board.Undo(board);
                     undo = true;
                     break;
+                }
+                else if (startingPos.XPos == -69)
+                {
+                    return true;
                 }
                 else if (board.CheckIfPawnIsPresent(color, startingPos))
                 {
@@ -79,6 +110,10 @@ namespace Draughts
                     board.Undo(board);
                     break;
                 }
+                else if (startingPos.XPos == -69)
+                {
+                    return true;
+                }
                 if (board.Fields[endingPos.YPos, endingPos.XPos] == null)
                 {
                     if (board.Fields[startingPos.YPos, startingPos.XPos].IsCrowned)
@@ -91,6 +126,7 @@ namespace Draughts
                     }
                 }
             }
+            return false;
         }
 
         private bool ValidateQueenMove(Board board, Coords startingPos, Coords endingPos, bool success, string enemy)
@@ -299,7 +335,7 @@ namespace Draughts
             if (board.AmountOfWhitePawns == 0 || board.AmountOfBlackPawns == 0)
             {
                 isThereWinOrTie = true;
-                Winner = board.AmountOfWhitePawns == 0 ? "black" : "white";
+                Winner = board.AmountOfWhitePawns == 0 ? "Kitties" : "Doggies";
             } else if (board.AmountOfWhitePawns == 1 && board.AmountOfBlackPawns == 1)
             {
                 int counter = 0;
