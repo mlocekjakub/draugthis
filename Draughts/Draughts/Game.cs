@@ -56,11 +56,15 @@ namespace Draughts
                     }
                 }
             }
-            Console.Write(margin);
-            Console.WriteLine(Winner != "tie" ? $"{Winner} wins!!!" : $"There's a {Winner}!!!");
-            Console.Write(margin);
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            if (!escape)
+            {
+                Console.Write(margin);
+                Console.WriteLine(Winner != "tie" ? $"{Winner} wins!!!" : $"There's a {Winner}!!!");
+                Console.Write(margin);
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
+            
         }
 
         private bool MakeAMove(Board board, string color)
@@ -110,7 +114,7 @@ namespace Draughts
                     board.Undo(board);
                     break;
                 }
-                else if (startingPos.XPos == -69)
+                else if (endingPos.XPos == -69)
                 {
                     return true;
                 }

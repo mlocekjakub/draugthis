@@ -14,6 +14,7 @@ namespace Draughts
             Menu menu = new Menu();
             while (true)
             {
+                Console.Clear();
                 var board = menu.RunMenu();
                 game.Start(board);
             }
