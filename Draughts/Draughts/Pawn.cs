@@ -15,10 +15,11 @@ namespace Draughts
 
         public Coords Position { get; set; }
 
-        public Pawn(string color)
+        public Pawn(string color,Coords position)
         {
             Color = color;
             IsCrowned = false;
+            Position = position;
             if (color == "white")
             {
                 FontColor = ConsoleColor.White;

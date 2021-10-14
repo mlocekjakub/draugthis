@@ -10,13 +10,14 @@ namespace Draughts
     {
         public static void Main(string[] args)
         {
-            //var board = new Board(10);
             var game = new Game();
-            //board.Fields[5, 4] = new Pawn("black");
-            Menu menu = new Menu();
-            var board = menu.RunMenu();
+            // Menu menu = new Menu();
+            // var board = menu.RunMenu();
+            Board board = new Board(10);
+            board.IsAiWhite = true;
+            board.IsAiBlack = true;
             game.Start(board);
-           
+
         }
         
     }

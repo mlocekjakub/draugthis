@@ -30,7 +30,7 @@ namespace Draughts
                     int intOutput;
                     if (int.TryParse(output, out intOutput) && intOutput > 9 && intOutput < 21)
                     {
-                        board = new Board(int.Parse(output));
+                        board = new Board(intOutput);
                         success = true;
                     }
                     else

@@ -11,6 +11,9 @@ namespace Draughts
     {
         Rewind _rewind;
 
+        public int AmountOfWhitePawns { get; set; }
+        public int AmountOfBlackPawns { get; set; }
+
         public bool IsAiWhite { get; set; }
 
         public bool IsAiBlack { get; set; }
@@ -22,11 +25,13 @@ namespace Draughts
 
         public Board(int n)
         {
+            AmountOfWhitePawns = n * 2;
+            AmountOfBlackPawns = n * 2;
             _rewind = new Rewind();
             Fields = new Pawn[n, n];
             BoardInit();
         }
-        
+
         public void BoardInit()
         {
             int boardSize = Fields.GetLength(1);
@@ -40,7 +45,7 @@ namespace Draughts
                 WhiteCursor = new Coords(boardSize - 1, 1);
                 BlackCursor = new Coords(0, boardSize - 2);
             }
-            
+
 
             for (int i = 0; i < boardSize; i++)
             {
@@ -50,7 +55,7 @@ namespace Draughts
                     {
                         if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                         {
-                            Fields[i, j] = new Pawn("black");
+                            Fields[i, j] = new Pawn("black", new Coords(i, j));
                         }
                         else
                         {
@@ -61,7 +66,7 @@ namespace Draughts
                     {
                         if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                         {
-                            Fields[i, j] = new Pawn("white");
+                            Fields[i, j] = new Pawn("white", new Coords(i, j));
                         }
                         else
                         {
@@ -156,7 +161,7 @@ namespace Draughts
             }
         }
 
-        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none", bool chainKill=false)
+        public void MovePawn(Coords startingPos, Coords endingPos, string killedColor = "none", bool chainKill = false)
         {
             if (chainKill)
             {
@@ -166,6 +171,7 @@ namespace Draughts
             {
                 _rewind.AddTurn(new Move(startingPos, endingPos, killedColor));
             }
+
             Fields[endingPos.YPos, endingPos.XPos] = Fields[startingPos.YPos, startingPos.XPos];
             RemovePawn(startingPos);
             UnhighlightPawn(endingPos);
@@ -195,6 +201,7 @@ namespace Draughts
 
         public void Undo()
         {
+            Console.WriteLine(_rewind._turns.Count);
             if (!_rewind.IsEmpty())
             {
                 var turn = _rewind.GetLastTurn();
@@ -205,41 +212,41 @@ namespace Draughts
                     if (move.KilledColour != "none")
                     {
                         var pos = move.GetKilledPawnCoords();
-                        Fields[pos.YPos, pos.XPos] = new Pawn(move.KilledColour);
+                        Fields[pos.YPos, pos.XPos] = new Pawn(move.KilledColour, new Coords(pos.YPos, pos.XPos));
                     }
                 }
             }
         }
 
 
-        public void PrintBoard(Coords cursor)
+        public void PrintBoard(Coords cursor = null)
         {
             ConsoleColor backgroundColor = Console.BackgroundColor;
             ConsoleColor foregroundColor = Console.ForegroundColor;
             Console.OutputEncoding = System.Text.Encoding.Unicode;
-            char columnLetter= 'A';
+            char columnLetter = 'A';
             Console.Write("    ");
-            for (int i = 0; i < this.Fields.GetLength(0); i++)
+            for (int i = 0; i < Fields.GetLength(0); i++)
             {
                 Console.Write($" {columnLetter++} ");
             }
+
             Console.WriteLine();
-            for (int i = 0; i < this.Fields.GetLength(0); i++)
+            for (int i = 0; i < Fields.GetLength(0); i++)
             {
                 Console.BackgroundColor = backgroundColor;
                 Console.ForegroundColor = foregroundColor;
-                if (i+1 < 10)
+                if (i + 1 < 10)
                 {
-                    Console.Write($"  {i+1} ");
+                    Console.Write($"  {i + 1} ");
                 }
                 else
                 {
-                    Console.Write($" {i+1} ");
+                    Console.Write($" {i + 1} ");
                 }
 
-                for (int j = 0; j < this.Fields.GetLength(0); j++)
+                for (int j = 0; j < Fields.GetLength(0); j++)
                 {
-                    
                     if (i % 2 == 0 & j % 2 == 1 || i % 2 == 1 & j % 2 == 0)
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
@@ -251,22 +258,21 @@ namespace Draughts
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
 
-                    if (i == cursor.YPos & j == cursor.XPos)
+                    if (cursor != null && i == cursor.YPos & j == cursor.XPos)
                     {
                         Console.BackgroundColor = ConsoleColor.DarkCyan;
                     }
 
-                    if (this.Fields[i, j] != null)
+                    if (Fields[i, j] != null)
                     {
-                        if (this.Fields[i, j].Highlight)
+                        if (Fields[i, j].Highlight)
                         {
                             Console.BackgroundColor = ConsoleColor.Cyan;
                         }
 
-                        Console.ForegroundColor = this.Fields[i, j].FontColor;
-                        
-                        Console.Write(this.Fields[i, j].IsCrowned?" ♀ ":" ○ ");
-                        
+                        Console.ForegroundColor = Fields[i, j].FontColor;
+
+                        Console.Write(Fields[i, j].IsCrowned ? " ♀ " : " ○ ");
                     }
                     else
                     {
